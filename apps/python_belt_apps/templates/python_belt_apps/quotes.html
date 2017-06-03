@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Qoutes</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  </head>
+  <body>
+    <h1>Welcome, {{ request.session.name }}</h1><br>
+    <a href="/logout">Logout</a><br>
+    <div class="qoutes">
+      <h3>Quotable Qoutes</h3>
+
+      {% for quote in quotes%}
+        {{quote.content}} | ({{quote.created_at|timesince}} ago)<br>
+        posted by: <a href="/users/{{quote.id}}">{{quote.user.first_name}}</a><br>
+
+        <!-- {% if quote.user == currentuser %}
+          <a href="/delete/{{secret.id}}/sec"> Delete</a>
+        {% endif %}<br><br> -->
+        <form action="/favorite/{{quote.id}}" method="post">
+          {% csrf_token %}
+          <input type="submit" name="favorite" value="Add to My List">
+        </form><br>
+      {% endfor %}<br>
+
+    </div><br>
+    <div class="favorites">
+      <h3>Your Favorites</h3>
+      {% for quote in quotes%}
+        {{quote.content}}<br>
+        posted by: {{quote.user.first_name}}<br>
+        <form action="/remove/{{quote.id}}" method="post">
+          {% csrf_token %}
+          <input type="submit" name="remove" value="Remove From My List">
+        </form><br>
+      {% endfor %}<br>
+
+      <!-- {% for favroite in favorites %}
+        {{favorite.favorited}}
+      {% endfor %} -->
+    </div><br>
+    <div class="contribute">
+      <h3>Contribute a Quote:</h3><br>
+      <form class="" action="/post_quote" method="post">
+        {% csrf_token %}
+        Quoted by: <input type="text" name="author"><br>
+        Message: <textarea name="quote" rows="6" cols="50"></textarea><br>
+        <input type="submit" name="submit" value="Submit">
+        {% if messages %}
+            {% for message in messages %}
+              <ul>
+                  {{message}}
+              </ul>
+            {% endfor %}
+        {% endif%}
+      </form>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Users</title>
+  </head>
+  <body>
+    <h2>Posts by: {{quote.user.first_name}}</h2>
+    <!-- <h2>Posts by: {{quote.user.first_name}}</h2> -->
+    <a href="/quo">Dashboard</a> | <a href="/logout">Logout</a><br><br>
+    {% for quote in quotes%}
+      {{quote.content}} | ({{quote.created_at|timesince}} ago)<br>
+      posted by: <a href="/users/{{quote.id}}">{{quote.user.first_name}}</a><br>
+
+      <!-- {% if quote.user == currentuser %}
+        <a href="/delete/{{secret.id}}/sec"> Delete</a>
+      {% endif %}<br><br> -->
+      <form action="/favorite/{{quote.id}}" method="post">
+        {% csrf_token %}
+        <input type="submit" name="favorite" value="Add to My List">
+      </form><br>
+    {% endfor %}<br>
+  </body>
+</html>

@@ -70,3 +70,48 @@ class User(models.Model):
 
     def __unicode__(self):
         return "id: " + str(self.id) +", first_name: " + self.first_name+ ", last_name: " + self.last_name+ ", email: " + self.email + ", password: " + str(self.password)
+
+
+
+
+class QuoteManager(models.Manager):
+    def post_submit(self, postData):
+        errors = []
+        if len(postData['post']) < 3:
+            errors.append("No quote typed to post :(...)")
+        if len(errors) == 0:
+            Quote.objects.create(content=postData['post'], user_id=postData['user_id'])
+        return errors
+
+    def quotes_favorited(self, quoteid, userid):
+        user = User.objects.get(id=userid)
+        print user
+        favo = Quote.objects.favorited()
+        print favo
+        fav = Quote.favorited.add(user)
+        # fav = Quote.favorited(quotes_liked=Quote, user=user)
+
+        print fav
+        # try:
+        #     qoute = self.get(id=quoteid)
+        # except:
+        #     return (False, "This secret is not found in our database!")
+        # user = User.objects.get(id=userid)
+        # if secret.user == user:
+        #     return (False, "You can't like your own secret!")
+        # secret.likers.add(user)
+        # return (True, "You liked this secret!")
+        return fav
+
+        # Quote.favorited.get(qoute_id=quote_id).remove
+
+class Quote(models.Model):
+    content = models.CharField(max_length=38)
+    user = models.ForeignKey(User, related_name="Quote")
+    favorited = models.ManyToManyField(User, related_name="quotes_liked")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    objects = QuoteManager()
+
+    def __unicode__(self):
+        return "id: " + str(self.id) +", content: " + self.content+ ", user: " + str(self.user)
